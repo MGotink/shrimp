@@ -116,7 +116,7 @@ describe Shrimp::Phantom do
     it "should be unable to copy file" do
       phantom = Shrimp::Phantom.new("file://#{testfile}")
       phantom.to_pdf("/foo/bar/")
-      phantom.error.should include "Unable to copy file "
+      phantom.error.should include "Unable to copy file"
     end
   end
 
