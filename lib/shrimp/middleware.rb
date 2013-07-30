@@ -12,11 +12,12 @@ module Shrimp
 
     def call(env)
       @request = Rack::Request.new(env)
-      if render_as_pdf? #&& headers['Content-Type'] =~ /text\/html|application\/xhtml\+xml/
+      if render_as_pdf?
         if already_rendered? && (up_to_date?(@options[:cache_ttl]) || @options[:cache_ttl] == 0)
           if File.size(render_to) == 0
             File.delete(render_to)
             remove_rendering_flag
+            Rails.logger.error "Generation of pdf failed, File.size returned 0 for #{render_to}"
             return error_response
           end
           return ready_response if env['HTTP_X_REQUESTED_WITH']
@@ -34,6 +35,7 @@ module Shrimp
           if rendering_in_progress?
             if rendering_timed_out?
               remove_rendering_flag
+              Rails.logger.error "Generation of pdf failed, rendering timeout for #{render_to}"
               error_response
             else
               reload_response(@options[:polling_interval])
