@@ -17,8 +17,7 @@ module Shrimp
           if File.size(render_to) == 0
             File.delete(render_to)
             remove_rendering_flag
-            Rails.logger.error "Generation of pdf failed, File.size returned 0 for #{render_to}"
-            return error_response
+            return error_response("Filesize for #{render_to} failed")
           end
           return ready_response if env['HTTP_X_REQUESTED_WITH']
           file = File.open(render_to, "rb")
@@ -35,8 +34,7 @@ module Shrimp
           if rendering_in_progress?
             if rendering_timed_out?
               remove_rendering_flag
-              Rails.logger.error "Generation of pdf failed, rendering timeout for #{render_to}"
-              error_response
+              error_response("Rendering timeout")
             else
               reload_response(@options[:polling_interval])
             end
@@ -158,13 +156,13 @@ module Shrimp
       [200, headers, [body]]
     end
 
-    def error_response
+    def error_response(message)
       body = <<-HTML.gsub(/[ \n]+/, ' ').strip
         <html>
         <head>
         </head>
         <body>
-        <h2>Sorry request timed out... </h2>
+        <h2>Sorry request timed out... #{message}</h2>
         </body>
       </ html>
       HTML
