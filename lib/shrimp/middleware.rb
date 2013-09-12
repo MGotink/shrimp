@@ -8,6 +8,7 @@ module Shrimp
       @options[:polling_offset]   ||= 1
       @options[:cache_ttl]        ||= 1
       @options[:request_timeout]  ||= @options[:polling_interval] * 10
+      @options[:ignore_ssl_errors] ||= false
     end
 
     def call(env)
