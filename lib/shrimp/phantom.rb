@@ -43,7 +43,6 @@ module Shrimp
 
     def run!
       @error  = nil
-      Rails.logger.warn "#{cmd}"
       @result = `#{cmd}`
       unless $?.exitstatus == 0
         @error  = @result
@@ -58,7 +57,7 @@ module Shrimp
       cookie_file                       = dump_cookies
       format, zoom, margin, orientation = options[:format], options[:zoom], options[:margin], options[:orientation]
       rendering_time, timeout           = options[:rendering_time], options[:rendering_timeout]
-      ignore_ssl_errors                 = options[:ignore_ssl_errors] ? "--ignore-ssl-errors" : ""
+      ignore_ssl_errors                 = options[:ignore_ssl_errors] ? "--ignore-ssl-errors=yes" : ""
       @outfile                          ||= "#{options[:tmpdir]}/#{Digest::MD5.hexdigest((Time.now.to_i + rand(9001)).to_s)}.pdf"
 
       [Shrimp.configuration.phantomjs, ignore_ssl_errors, SCRIPT_FILE, @source.to_s, @outfile, format, zoom, margin, orientation, cookie_file, rendering_time, timeout].join(" ")
